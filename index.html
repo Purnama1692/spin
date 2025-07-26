@@ -1,0 +1,30 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Roulette Spinner Kelompok</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🎡 Spinner Acak Nama & Kelompok</h1>
+    <textarea id="namaInput" placeholder="Masukkan daftar nama, satu per baris..."></textarea>
+    
+    <div class="button-group">
+      <button onclick="mulaiSpin()">Spin Nama</button>
+      <button onclick="acakKelompok()">Buat Kelompok</button>
+    </div>
+
+    <div class="spinner-wrapper">
+      <div id="spinner" class="spinner"></div>
+      <div id="selected" class="selected"></div>
+    </div>
+
+    <div id="kelompokOutput" class="output"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

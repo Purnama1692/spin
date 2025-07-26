@@ -1,0 +1,87 @@
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f9ff;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  max-width: 700px;
+  width: 100%;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+textarea {
+  width: 100%;
+  height: 150px;
+  font-size: 16px;
+  padding: 10px;
+  margin-bottom: 10px;
+  resize: vertical;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.button-group button {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  background-color: #0077cc;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.button-group button:hover {
+  background-color: #005fa3;
+}
+
+.spinner-wrapper {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.spinner {
+  font-size: 24px;
+  min-height: 40px;
+  color: #0077cc;
+  font-weight: bold;
+  animation: fadein 0.5s ease-in-out;
+}
+
+.selected {
+  font-size: 24px;
+  color: green;
+  margin-top: 10px;
+}
+
+@keyframes fadein {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.output .kelompok {
+  background: #e8f5e9;
+  border-left: 4px solid #2e7d32;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+}
