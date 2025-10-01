@@ -1,30 +1,842 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Roulette Spinner Kelompok</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Door Prize Generator - Event HUT</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .settings {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            color: #555;
+            min-width: 80px;
+        }
+
+        .input-group input {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            width: 120px;
+            text-align: center;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .number-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 4rem;
+            font-weight: bold;
+            padding: 40px;
+            border-radius: 20px;
+            margin: 30px 0;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .number-display.spinning {
+            animation: pulse 0.1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .number-display::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            animation: shine 2s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 2px solid #e0e0e0;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .winner-list {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .winner-list h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .winner-item {
+            background: white;
+            padding: 10px 15px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .winner-number {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 1.2rem;
+        }
+
+        .winner-time {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* Pop-up Styles */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .popup-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .popup-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 25px;
+            padding: 50px 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            color: white;
+            position: relative;
+            transform: scale(0.8) translateY(50px);
+            transition: all 0.3s ease;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .popup-overlay.active .popup-content {
+            transform: scale(1) translateY(0);
+        }
+
+        .popup-content::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff9ff3);
+            border-radius: 30px;
+            z-index: -1;
+            animation: rainbow-border 3s linear infinite;
+        }
+
+        @keyframes rainbow-border {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        .popup-emoji {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: bounce 0.6s ease-in-out infinite alternate;
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-10px); }
+        }
+
+        .popup-title {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .popup-subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .popup-number {
+            font-size: 5rem;
+            font-weight: bold;
+            margin: 20px 0;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .popup-message {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            line-height: 1.5;
+            opacity: 0.9;
+        }
+
+        .popup-close {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .popup-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .popup-fireworks {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            border-radius: 25px;
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .number-display {
+                font-size: 3rem;
+                padding: 30px 20px;
+            }
+            
+            .input-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .btn {
+                padding: 12px 25px;
+                font-size: 1rem;
+            }
+
+            .popup-content {
+                padding: 40px 30px;
+            }
+
+            .popup-title {
+                font-size: 2.5rem;
+            }
+
+            .popup-number {
+                font-size: 4rem;
+                padding: 15px;
+            }
+
+            .popup-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .popup-message {
+                font-size: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🎡 Spinner Acak Nama</h1>
-    <textarea id="namaInput" placeholder="Masukkan daftar nama, satu per baris..."></textarea>
-    
-    <div class="button-group">
-      <button onclick="mulaiSpin()">Spin Nama</button>
-      
+    <div class="container">
+        <div class="header">
+            <h1 class="title">🎉 Door Prize</h1>
+            <p class="subtitle">Generator Nomor Pemenang HUT</p>
+        </div>
+
+        <div class="settings">
+            <div class="input-group">
+                <label for="minNumber">Dari:</label>
+                <input type="number" id="minNumber" value="1" min="1">
+                <label for="maxNumber">Sampai:</label>
+                <input type="number" id="maxNumber" value="100" min="1">
+            </div>
+        </div>
+
+        <div class="number-display" id="numberDisplay">
+            <span id="currentNumber">?</span>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-primary" id="generateBtn" onclick="startGeneration()">
+                🎲 Acak Nomor
+            </button>
+            <button class="btn btn-secondary" id="resetBtn" onclick="resetAll()">
+                🔄 Reset
+            </button>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="totalWinners">0</div>
+                <div class="stat-label">Total Pemenang</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="remainingNumbers">100</div>
+                <div class="stat-label">Sisa Nomor</div>
+            </div>
+        </div>
+
+        <div class="winner-list" id="winnerList" style="display: none;">
+            <h3>🏆 Daftar Pemenang</h3>
+            <div id="winnerContainer"></div>
+        </div>
     </div>
 
-    <div class="spinner-wrapper">
-      <div id="spinner" class="spinner"></div>
-      <div id="selected" class="selected"></div>
+    <!-- Pop-up Selamat -->
+    <div class="popup-overlay" id="congratsPopup">
+        <div class="popup-content">
+            <canvas class="popup-fireworks" id="fireworksCanvas"></canvas>
+            <div class="popup-emoji">🎉</div>
+            <div class="popup-title">SELAMAT!</div>
+            <div class="popup-subtitle">Nomor Pemenang:</div>
+            <div class="popup-number" id="popupNumber">0</div>
+            <div class="popup-message" id="popupMessage">
+                Selamat kepada pemegang nomor undian ini!<br>
+                Silakan menuju ke panggung untuk mengambil hadiah Anda!
+            </div>
+            <button class="popup-close" onclick="closePopup()">
+                ✨ Tutup
+            </button>
+        </div>
     </div>
 
-    <div id="kelompokOutput" class="output"></div>
-  </div>
+    <canvas class="confetti" id="confettiCanvas"></canvas>
 
-  <script src="script.js"></script>
+    <script>
+        let usedNumbers = new Set();
+        let winners = [];
+        let isGenerating = false;
+
+        // Array pesan congratulasi yang bervariasi
+        const congratsMessages = [
+            "Selamat kepada pemegang nomor undian ini!<br>Silakan menuju ke panggung untuk mengambil hadiah Anda!",
+            "CONGRATULATIONS!<br>Anda adalah pemenang beruntung hari ini!<br>Segera klaim hadiah Anda!",
+            "HOREE! MENANG!<br>Nomor keberuntungan Anda telah terpilih!<br>Jangan lupa ambil hadiahnya ya!",
+            "JACKPOT!<br>Selamat! Anda mendapat hadiah spesial!<br>Tim panitia menunggu Anda di panggung!",
+            "WINNER WINNER!<br>Keberuntungan berpihak pada Anda!<br>Hadiah menanti untuk diambil!"
+        ];
+
+        function updateStats() {
+            const minNum = parseInt(document.getElementById('minNumber').value);
+            const maxNum = parseInt(document.getElementById('maxNumber').value);
+            const totalPossible = maxNum - minNum + 1;
+            const remaining = totalPossible - usedNumbers.size;
+            
+            document.getElementById('totalWinners').textContent = winners.length;
+            document.getElementById('remainingNumbers').textContent = remaining;
+        }
+
+        function getAvailableNumbers() {
+            const minNum = parseInt(document.getElementById('minNumber').value);
+            const maxNum = parseInt(document.getElementById('maxNumber').value);
+            const available = [];
+            
+            for (let i = minNum; i <= maxNum; i++) {
+                if (!usedNumbers.has(i)) {
+                    available.push(i);
+                }
+            }
+            
+            return available;
+        }
+
+        function startGeneration() {
+            if (isGenerating) return;
+            
+            const available = getAvailableNumbers();
+            if (available.length === 0) {
+                alert('Semua nomor sudah digunakan! Silakan reset untuk memulai lagi.');
+                return;
+            }
+
+            isGenerating = true;
+            const generateBtn = document.getElementById('generateBtn');
+            const numberDisplay = document.getElementById('numberDisplay');
+            const currentNumber = document.getElementById('currentNumber');
+            
+            generateBtn.disabled = true;
+            generateBtn.textContent = '🎲 Mengacak...';
+            numberDisplay.classList.add('spinning');
+
+            let spinCount = 0;
+            const maxSpins = 30 + Math.floor(Math.random() * 20);
+
+            const spinInterval = setInterval(() => {
+                const randomIndex = Math.floor(Math.random() * available.length);
+                currentNumber.textContent = available[randomIndex];
+                spinCount++;
+
+                if (spinCount >= maxSpins) {
+                    clearInterval(spinInterval);
+                    finishGeneration();
+                }
+            }, 100);
+        }
+
+        function finishGeneration() {
+            const available = getAvailableNumbers();
+            const finalNumber = available[Math.floor(Math.random() * available.length)];
+            
+            document.getElementById('currentNumber').textContent = finalNumber;
+            document.getElementById('numberDisplay').classList.remove('spinning');
+            
+            usedNumbers.add(finalNumber);
+            winners.push({
+                number: finalNumber,
+                time: new Date().toLocaleTimeString('id-ID')
+            });
+
+            updateWinnerList();
+            updateStats();
+            createConfetti();
+            
+            // Tampilkan pop-up selamat setelah delay singkat
+            setTimeout(() => {
+                showCongratsPopup(finalNumber);
+            }, 500);
+
+            setTimeout(() => {
+                const generateBtn = document.getElementById('generateBtn');
+                generateBtn.disabled = false;
+                generateBtn.textContent = '🎲 Acak Nomor';
+                isGenerating = false;
+            }, 1000);
+        }
+
+        function showCongratsPopup(number) {
+            const popup = document.getElementById('congratsPopup');
+            const popupNumber = document.getElementById('popupNumber');
+            const popupMessage = document.getElementById('popupMessage');
+            
+            // Set nomor pemenang
+            popupNumber.textContent = number;
+            
+            // Pilih pesan congratulasi secara acak
+            const randomMessage = congratsMessages[Math.floor(Math.random() * congratsMessages.length)];
+            popupMessage.innerHTML = randomMessage;
+            
+            // Tampilkan popup dengan animasi
+            popup.classList.add('active');
+            
+            // Mulai animasi fireworks
+            createPopupFireworks();
+            
+            // Auto close setelah 10 detik (opsional)
+            setTimeout(() => {
+                if (popup.classList.contains('active')) {
+                    closePopup();
+                }
+            }, 10000);
+        }
+
+        function closePopup() {
+            const popup = document.getElementById('congratsPopup');
+            popup.classList.remove('active');
+        }
+
+        function createPopupFireworks() {
+            const canvas = document.getElementById('fireworksCanvas');
+            const ctx = canvas.getContext('2d');
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+
+            const fireworks = [];
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#a8e6cf', '#ffd93d'];
+
+            // Buat beberapa firework
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    const firework = {
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        particles: []
+                    };
+
+                    // Buat partikel untuk setiap firework
+                    for (let j = 0; j < 15; j++) {
+                        firework.particles.push({
+                            x: firework.x,
+                            y: firework.y,
+                            vx: (Math.random() - 0.5) * 8,
+                            vy: (Math.random() - 0.5) * 8,
+                            color: colors[Math.floor(Math.random() * colors.length)],
+                            life: 1,
+                            decay: Math.random() * 0.02 + 0.01,
+                            size: Math.random() * 3 + 1
+                        });
+                    }
+                    
+                    fireworks.push(firework);
+                }, i * 200);
+            }
+
+            function animateFireworks() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                for (let i = fireworks.length - 1; i >= 0; i--) {
+                    const firework = fireworks[i];
+                    let hasLiveParticles = false;
+
+                    for (let j = firework.particles.length - 1; j >= 0; j--) {
+                        const particle = firework.particles[j];
+                        
+                        if (particle.life > 0) {
+                            hasLiveParticles = true;
+                            
+                            ctx.save();
+                            ctx.globalAlpha = particle.life;
+                            ctx.fillStyle = particle.color;
+                            ctx.beginPath();
+                            ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+                            ctx.fill();
+                            ctx.restore();
+
+                            particle.x += particle.vx;
+                            particle.y += particle.vy;
+                            particle.vy += 0.1; // gravity
+                            particle.life -= particle.decay;
+                        } else {
+                            firework.particles.splice(j, 1);
+                        }
+                    }
+
+                    if (!hasLiveParticles) {
+                        fireworks.splice(i, 1);
+                    }
+                }
+
+                if (fireworks.length > 0) {
+                    requestAnimationFrame(animateFireworks);
+                }
+            }
+
+            animateFireworks();
+        }
+
+        function updateWinnerList() {
+            const winnerList = document.getElementById('winnerList');
+            const winnerContainer = document.getElementById('winnerContainer');
+            
+            if (winners.length > 0) {
+                winnerList.style.display = 'block';
+                winnerContainer.innerHTML = winners
+                    .slice()
+                    .reverse()
+                    .map((winner, index) => `
+                        <div class="winner-item">
+                            <span class="winner-number">#${winner.number}</span>
+                            <span class="winner-time">${winner.time}</span>
+                        </div>
+                    `).join('');
+            } else {
+                winnerList.style.display = 'none';
+            }
+        }
+
+        function resetAll() {
+            if (confirm('Yakin ingin mereset semua data pemenang?')) {
+                usedNumbers.clear();
+                winners = [];
+                document.getElementById('currentNumber').textContent = '?';
+                updateWinnerList();
+                updateStats();
+                closePopup(); // Tutup popup jika sedang terbuka
+                
+                const generateBtn = document.getElementById('generateBtn');
+                generateBtn.disabled = false;
+                generateBtn.textContent = '🎲 Acak Nomor';
+                isGenerating = false;
+            }
+        }
+
+        function createConfetti() {
+            const canvas = document.getElementById('confettiCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const confetti = [];
+            const colors = ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe'];
+
+            for (let i = 0; i < 50; i++) {
+                confetti.push({
+                    x: Math.random() * canvas.width,
+                    y: -10,
+                    vx: Math.random() * 4 - 2,
+                    vy: Math.random() * 3 + 2,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    size: Math.random() * 5 + 3,
+                    rotation: Math.random() * 360,
+                    rotationSpeed: Math.random() * 10 - 5
+                });
+            }
+
+            function animateConfetti() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                for (let i = confetti.length - 1; i >= 0; i--) {
+                    const c = confetti[i];
+                    
+                    ctx.save();
+                    ctx.translate(c.x, c.y);
+                    ctx.rotate((c.rotation * Math.PI) / 180);
+                    ctx.fillStyle = c.color;
+                    ctx.fillRect(-c.size / 2, -c.size / 2, c.size, c.size);
+                    ctx.restore();
+
+                    c.x += c.vx;
+                    c.y += c.vy;
+                    c.rotation += c.rotationSpeed;
+                    c.vy += 0.1;
+
+                    if (c.y > canvas.height + 10) {
+                        confetti.splice(i, 1);
+                    }
+                }
+
+                if (confetti.length > 0) {
+                    requestAnimationFrame(animateConfetti);
+                }
+            }
+
+            animateConfetti();
+        }
+
+        // Event listeners
+        document.getElementById('minNumber').addEventListener('change', updateStats);
+        document.getElementById('maxNumber').addEventListener('change', function() {
+            const minNum = parseInt(document.getElementById('minNumber').value);
+            const maxNum = parseInt(this.value);
+            
+            if (maxNum < minNum) {
+                this.value = minNum;
+            }
+            updateStats();
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.code === 'Space' && !isGenerating) {
+                e.preventDefault();
+                startGeneration();
+            } else if (e.code === 'KeyR' && e.ctrlKey) {
+                e.preventDefault();
+                resetAll();
+            } else if (e.code === 'Escape') {
+                closePopup();
+            }
+        });
+
+        // Tutup popup jika klik di luar area popup
+        document.getElementById('congratsPopup').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePopup();
+            }
+        });
+
+        // Initialize
+        updateStats();
+
+        // Handle window resize untuk canvas
+        window.addEventListener('resize', function() {
+            const canvas = document.getElementById('confettiCanvas');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
 </body>
 </html>
